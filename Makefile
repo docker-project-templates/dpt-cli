@@ -1,6 +1,6 @@
 .PHONY: show-help setup-git-hooks new-cmd
 
-default: show-help
+default: setup-git-hooks show-help
 
 show-help:
 	@echo "make setup-git-hooks - Set up git hooks"
