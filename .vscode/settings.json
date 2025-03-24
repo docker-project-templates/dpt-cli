@@ -1,0 +1,15 @@
+{
+    // * Editor Settings
+    // "keyboard.dispatch": "keyCode", // Use keyCode this in your user configuration to enable alt keybindings in the terminal
+    "editor.formatOnSave": true,
+    // * Conventional commits settings
+    "conventionalCommits.gitmoji": false,
+    "conventionalCommits.scopes": [
+        "cli",
+        "config",
+        "docs",
+        "docker",
+        "lib",
+        "test",
+    ]
+}

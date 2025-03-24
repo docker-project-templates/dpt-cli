@@ -1,0 +1,109 @@
+#!/bin/bash
+
+set -e
+
+# Check if command name was provided
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <command_name>"
+    exit 1
+fi
+
+CMD_NAME=$1
+CMD_NAME_CAPITALIZED="$(tr '[:lower:]' '[:upper:]' <<<${CMD_NAME:0:1})${CMD_NAME:1}"
+
+# Create commands directory if it doesn't exist
+mkdir -p src/commands
+
+# Check if commands module exists, if not create it
+if [ ! -f "src/commands/mod.rs" ]; then
+    echo "Creating commands module file..."
+    cat >src/commands/mod.rs <<EOF
+// This file exports all command modules
+EOF
+fi
+
+# Create the command file
+echo "Creating command file for '$CMD_NAME'..."
+cat >"src/commands/${CMD_NAME}.rs" <<EOF
+use clap::Args;
+
+#[derive(Args)]
+pub struct ${CMD_NAME_CAPITALIZED}Args {
+    pub name: Option<String>,
+    // Add more arguments as needed
+}
+
+pub fn execute(args: &${CMD_NAME_CAPITALIZED}Args) {
+    println!("'dpt ${CMD_NAME}' was used, name is: {:?}", args.name);
+    // Add your command implementation here
+}
+EOF
+
+# Check if the module is already exported in mod.rs
+if ! grep -q "pub mod ${CMD_NAME};" "src/commands/mod.rs"; then
+    echo "Adding module to commands/mod.rs..."
+    echo "pub mod ${CMD_NAME};" >>src/commands/mod.rs
+fi
+
+# Check if main.rs already imports commands module
+if ! grep -q "mod commands;" "src/main.rs"; then
+    echo "Updating main.rs to use commands module..."
+    sed -i '1s/^/use clap::Parser;\nmod commands;\n\n/' src/main.rs
+fi
+
+# Update Commands enum in mod.rs if it doesn't exist
+if ! grep -q "pub enum Commands" "src/commands/mod.rs"; then
+    echo "Creating Commands enum in mod.rs..."
+    cat >>src/commands/mod.rs <<EOF
+
+use clap::Subcommand;
+
+#[derive(Subcommand)]
+pub enum Commands {
+    /// ${CMD_NAME_CAPITALIZED} command
+    ${CMD_NAME_CAPITALIZED}(${CMD_NAME}::${CMD_NAME_CAPITALIZED}Args),
+}
+
+pub fn execute_command(command: &Commands) {
+    match command {
+        Commands::${CMD_NAME_CAPITALIZED}(args) => ${CMD_NAME}::execute(args),
+    }
+}
+EOF
+else
+    # Add the new command to the existing Commands enum
+    echo "Updating Commands enum with new command..."
+    sed -i "/pub enum Commands {/a \ \ \ \ /// ${CMD_NAME_CAPITALIZED} command\n\ \ \ \ ${CMD_NAME_CAPITALIZED}(${CMD_NAME}::${CMD_NAME_CAPITALIZED}Args)," src/commands/mod.rs
+
+    # Add the new match arm to execute_command
+    sed -i "/match command {/a \ \ \ \ \ \ \ \ Commands::${CMD_NAME_CAPITALIZED}(args) => ${CMD_NAME}::execute(args)," src/commands/mod.rs
+fi
+
+# Check if we need to update the main.rs structure
+if ! grep -q "use commands::{Commands, execute_command};" src/main.rs; then
+    echo "Setting up main.rs for modular commands..."
+    cat >src/main.rs.new <<EOF
+use clap::Parser;
+mod commands;
+
+use commands::{Commands, execute_command};
+
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
+#[command(propagate_version = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+fn main() {
+    let cli = Cli::parse();
+    execute_command(&cli.command);
+}
+EOF
+    mv src/main.rs.new src/main.rs
+fi
+
+echo "Done! Command '${CMD_NAME}' has been created."
+echo "You can now use it with: cargo run -- ${CMD_NAME} [ARGS]"
+# chmod +x .tools/bin/create_cmd
