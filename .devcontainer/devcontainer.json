@@ -32,7 +32,11 @@
 				"shd101wyy.markdown-preview-enhanced",
 				"davidanson.vscode-markdownlint",
 				"task.vscode-task",
-				"vivaxy.vscode-conventional-commits"
+				"vivaxy.vscode-conventional-commits",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter",
+				"charliermarsh.ruff"
 			]
 		}
 	},
