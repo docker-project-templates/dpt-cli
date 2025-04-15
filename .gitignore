@@ -1,1 +1,9 @@
-/target
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environment directories
+# The name of the virtual environment directory can vary, but it's common to use .venv or venv
+# Add any additional virtual environment directories here
+.venv
+venv
