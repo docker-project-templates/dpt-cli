@@ -1,4 +1,5 @@
 import click
+from src.env_cmd import env_cmd
 
 
 @click.group()
@@ -15,6 +16,8 @@ def hello(count, name):
     for x in range(count):
         click.echo(f"Hello {name}!")
 
+
+dpt.add_command(env_cmd)
 
 if __name__ == "__main__":
     dpt()
