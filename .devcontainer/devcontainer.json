@@ -18,6 +18,7 @@
 			"type": "volume"
 		}
 	],
+	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -37,15 +38,29 @@
 				"ms-python.vscode-pylance",
 				"ms-python.black-formatter",
 				"charliermarsh.ruff"
-			]
+			],
+			"settings": {
+				// * Editor Settings
+				// "keyboard.dispatch": "keyCode", // Use keyCode this in your user configuration to enable alt keybindings in the terminal
+				"editor.formatOnSave": true,
+				"python.defaultInterpreterPath": "./.venv/bin/python",
+				"conventionalCommits.gitmoji": false,
+				"conventionalCommits.scopes": [
+					"devcontainer",
+					"cli",
+					"config",
+					"docs",
+					"docker",
+					"lib",
+					"test"
+				]
+			}
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "python --version",
-	// Configure tool-specific properties.
-	// "customizations": {},
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 	// Cancel the shutdown process when the window is closed.
