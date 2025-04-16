@@ -2,6 +2,11 @@
 __pycache__/
 *.py[cod]
 
+# Ignore build artifacts
+build/
+dist/
+dpt.spec
+
 # Ignore virtual environment directories
 # The name of the virtual environment directory can vary, but it's common to use .venv or venv
 # Add any additional virtual environment directories here

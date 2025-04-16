@@ -7,6 +7,7 @@ ARG POETRY_VERSION
 # * Install poetry in order to manage the dependencies
 RUN pip install --upgrade pip && \
     pip install poetry==${POETRY_VERSION} && \
+    pip install -U pyinstaller && \
     poetry config virtualenvs.options.always-copy true && \
     poetry config virtualenvs.prompt "venv" && \
     poetry config virtualenvs.in-project true
