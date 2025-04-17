@@ -15,3 +15,5 @@ def env_cmd():
 
 
 env_cmd.add_command(commands.list_env_files)
+env_cmd.add_command(commands.remove_env_files)
+env_cmd.add_command(commands.init_env_files)
